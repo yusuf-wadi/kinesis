@@ -1,0 +1,22 @@
+import bpy
+
+C = bpy.context
+D = bpy.data
+rocks = []
+
+if D.collections.get('rocks'):
+    rocks_collection = D.collections['rocks']
+else:
+    rocks_collection = D.collections.new('rocks')
+    C.scene.collection.children.link(rocks_collection)
+
+C.view_layer.active_layer_collection = \
+C.view_layer.layer_collection.children['rocks']
+
+#Create a 4x4 grid of evenly spaced points.
+for x in range(-2, 2):
+    for y in range(-2, 2):
+        #Create a cube at each point and add it to the list.
+        rock = bpy.ops.mesh.primitive_cube_add(location = (x*4, y*4, 0))
+        rocks.append(rock)
+

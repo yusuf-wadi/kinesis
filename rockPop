@@ -1,0 +1,45 @@
+import bpy
+import random
+import time
+
+C = bpy.context
+D = bpy.data
+scene = C.scene
+bop = bpy.ops
+
+if D.collections.get('rocks'):
+    tiles_collection = D.collections['rocks']
+else:
+    rocks_collection = D.collections.new('rocks')
+    C.scene.collection.children.link(rocks_collection)
+
+C.view_layer.active_layer_collection = \
+    C.view_layer.layer_collection.children['rocks']
+
+# Create a space x space grid of evenly spaced points.
+space = 4 #always positive
+for x in range(0, space):
+    for y in range(0, space):
+        # rock
+        bop.mesh.add_mesh_rock()
+        time.sleep(0.5)
+
+rockColl = D.collections["rocks"].all_objects
+for x in range(0, space):
+    for y in range(0, space):
+        i = (space)*(x) + (y)
+        rockob = rockColl[i]
+        rockob.location = (x*space**2, y*space**2, 0)
+        
+        C.view_layer.objects.active = rockob
+        rockob.select_set(True)
+        
+        bop.object.convert(target = 'MESH')
+        decMod = rockob.modifiers.new(name="Decimate", type='DECIMATE')
+        decMod.ratio = 0.02 - (random.uniform(0, 1)/100)
+        bop.object.convert(target = 'MESH')
+#        bop.object.editmode_toggle()
+#        bop.mesh.select_linked(delimit=set())
+#        bop.transform.vertex_random(offset=0.1)
+        
+        
